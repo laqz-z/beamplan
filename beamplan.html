@@ -627,7 +627,8 @@ function genPlan(){
     const typeClass=isHook?'styh':hasOverlay?'styt':'styp';
     const div=document.createElement('div');
     div.className='si';
-    div.innerHTML=`<div class="snc"><div class="sni ${ni}">${i+1}</div></div>
+    const overlayHtml=hasOverlay?`<div class="sovl" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div><div class="sovll">Text overlay</div><div class="sovlt">${rep(slide.ov)||''}</div></div><button onclick="copyLine('${(rep(slide.ov)||'').replace(/'/g,"\\'")}')" style="font-family:'DM Mono',monospace;font-size:9px;padding:3px 8px;background:transparent;border:1px solid var(--bd);color:var(--mu);cursor:pointer;border-radius:2px;flex-shrink:0;transition:all .12s" onmouseover="this.style.color='var(--tx)'" onmouseout="this.style.color='var(--mu)'">copy</button></div>`:'';
+div.innerHTML=`<div class="snc"><div class="sni ${ni}">${i+1}</div></div>
       <div class="scc2">
         <div class="str">
           <span class="sty ${typeClass}">${typeLbl}</span>
@@ -635,7 +636,7 @@ function genPlan(){
         </div>
         <div class="slbl2">${slide.l||''}</div>
         <div class="sdsc">${slide.d||''}</div>
-        ${hasOverlay?`<div class="sovl"><div class="sovll">Text overlay</div><div class="sovlt">${rep(slide.ov)||''}</div></div>`:''}
+        ${overlayHtml}
       </div>`;
     slist.appendChild(div);
   });
@@ -725,6 +726,14 @@ function copyFullPlan(){
     btn.textContent='✓ Copied to clipboard';
     btn.classList.add('copied');
     setTimeout(()=>{btn.innerHTML='&#128203; Copy full plan for shoot';btn.classList.remove('copied');},2500);
+  });
+}
+
+function copyLine(txt){
+  navigator.clipboard?.writeText(txt).then(()=>{
+    const btns=[...document.querySelectorAll('#slist button')];
+    const btn=btns.find(b=>b.getAttribute('onclick')?.includes(txt.slice(0,20)));
+    if(btn){btn.textContent='✓';setTimeout(()=>btn.textContent='copy',1500);}
   });
 }
 </script>
