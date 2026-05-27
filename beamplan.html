@@ -177,11 +177,18 @@ header{padding:32px 0 22px;border-bottom:1px solid var(--bd);margin-bottom:40px}
 .save-flash{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ac);color:#000;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;padding:8px 18px;border-radius:2px;letter-spacing:.5px;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
 .save-flash.show{opacity:1}
 
+.random-btn{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--ac);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 20px rgba(232,255,71,.25);transition:all .15s;z-index:50}
+.random-btn:hover{transform:scale(1.08);background:#d4eb00}
+.random-btn:active{transform:scale(.95)}
+.copy-plan-btn{width:100%;padding:11px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.5px;background:transparent;border:1px solid var(--bd);color:var(--mu);cursor:pointer;border-radius:2px;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
+.copy-plan-btn:hover{border-color:var(--mu2);color:var(--tx)}
+.copy-plan-btn.copied{color:var(--ac);border-color:rgba(232,255,71,.3)}
 @media(max-width:600px){
   .logo{font-size:34px}.stit{font-size:28px}
   .og{grid-template-columns:1fr 1fr}.cg{grid-template-columns:1fr}
   .budget-opts.show{grid-template-columns:repeat(2,1fr)}
   .hist-panel{max-width:100%}
+  .random-btn{bottom:16px;right:16px}
 }
 </style>
 </head>
@@ -283,6 +290,7 @@ header{padding:32px 0 22px;border-bottom:1px solid var(--bd);margin-bottom:40px}
     <div class="osh"><div class="ost">Viral tips</div></div>
     <div class="osb"><div class="tips" id="tips"></div></div>
   </div>
+  <button class="copy-plan-btn" id="copyPlanBtn" onclick="copyFullPlan()">&#128203; Copy full plan for shoot</button>
   <button class="ri-btn" onclick="regenIdea()"><span class="sp" id="sp2">&#8635;</span> Regenerate idea &mdash; get a different concept</button>
   <div class="arow">
     <button class="btn" onclick="restart()">Start over &#8594;</button>
@@ -290,6 +298,9 @@ header{padding:32px 0 22px;border-bottom:1px solid var(--bd);margin-bottom:40px}
   </div>
 </div>
 </div>
+
+<!-- RANDOM PLAN BUTTON -->
+<button class="random-btn" onclick="randomPlan()" title="Random plan">&#127922;</button>
 
 <!-- HISTORY OVERLAY -->
 <div class="hist-overlay" id="histOverlay" onclick="overlayClick(event)">
@@ -671,6 +682,51 @@ function copyTags(){
 
 // init count on load
 updateHistCount();
+
+function randomPlan(){
+  const scenarios=['restore','chase','race','cinematic','crew','drift'];
+  const tones=['dramatic','hype','dark','funny'];
+  const slideCounts=[8,12,15];
+  S.scenario=scenarios[Math.floor(Math.random()*scenarios.length)];
+  S.tone=tones[Math.floor(Math.random()*tones.length)];
+  S.slides=slideCounts[Math.floor(Math.random()*slideCounts.length)];
+  S.ideaIdx=Math.floor(Math.random()*20);
+  const pool=carDB[S.scenario]||carDB.restore;
+  const allCars=pool.flat();
+  S.car=allCars[Math.floor(Math.random()*allCars.length)].name;
+  genPlan();
+}
+
+function copyFullPlan(){
+  const car=S.car||'[CAR]';
+  const rep=s=>s?s.replace(/\[CAR\]/g,car):s;
+  const idea=getIdea();
+  const tmplArr=(slideTemplates[S.scenario]||slideTemplates.restore)[S.tone]||slideTemplates.restore.dramatic;
+  const tmpl=tmplArr[idea.sv%tmplArr.length];
+  const slides=(tmpl||[]).slice(0,S.slides);
+  let txt='';
+  txt+=`BEAMPLAN — ${car.toUpperCase()}\n`;
+  txt+=`${(S.scenario||'').toUpperCase()} / ${(S.tone||'').toUpperCase()} / ${S.slides} SLIDES\n`;
+  txt+='─'.repeat(36)+'\n\n';
+  txt+=`HOOK:\n${rep(idea.hook)||''}\n\n`;
+  txt+=`TITLE: ${rep(idea.title)||''}\n`;
+  txt+=`CAPTION: ${rep(idea.cap)||''}\n\n`;
+  txt+='SLIDES:\n';
+  slides.forEach((s,i)=>{
+    txt+=`\n${i+1}. ${s.l||''}\n`;
+    txt+=`   ${s.d||''}\n`;
+    if(s.ov) txt+=`   OVERLAY: "${rep(s.ov)}"\n`;
+  });
+  txt+='\nHASHTAGS:\n';
+  const sceneTags=tags[S.scenario]||tags.restore;
+  txt+=sceneTags.map(t=>'#'+t).join(' ');
+  navigator.clipboard?.writeText(txt).then(()=>{
+    const btn=document.getElementById('copyPlanBtn');
+    btn.textContent='✓ Copied to clipboard';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.innerHTML='&#128203; Copy full plan for shoot';btn.classList.remove('copied');},2500);
+  });
+}
 </script>
 </body>
 </html>
