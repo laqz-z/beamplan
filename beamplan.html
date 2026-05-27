@@ -11,9 +11,13 @@
 body{background:var(--bg);color:var(--tx);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden}
 .wrap{max-width:940px;margin:0 auto;padding:0 24px}
 header{padding:32px 0 22px;border-bottom:1px solid var(--bd);margin-bottom:40px}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:50px;letter-spacing:3px;color:var(--ac);line-height:1;display:flex;align-items:baseline;gap:14px}
 .logo small{font-family:'DM Mono',monospace;font-size:11px;color:var(--mu);letter-spacing:2px;padding-bottom:5px}
 .tagline{font-family:'DM Mono',monospace;font-size:11px;color:var(--mu);letter-spacing:1.5px;margin-top:5px}
+.hist-btn{font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;background:transparent;border:1px solid var(--bd);color:var(--mu);cursor:pointer;border-radius:2px;transition:all .15s;display:flex;align-items:center;gap:7px;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;margin-top:6px}
+.hist-btn:hover{border-color:var(--mu2);color:var(--tx)}
+.hist-btn .hb-count{background:var(--ac);color:#000;border-radius:10px;padding:1px 6px;font-size:9px;font-weight:700}
 .step{display:none;animation:fu .25s ease}
 .step.active{display:block}
 @keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -129,14 +133,68 @@ header{padding:32px 0 22px;border-bottom:1px solid var(--bd);margin-bottom:40px}
 .ri-btn:hover{border-color:var(--mu2);color:var(--tx)}
 .arow{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;padding-bottom:48px}
 .idea-counter{font-family:'DM Mono',monospace;font-size:10px;color:var(--mu);margin-left:auto;padding:4px 10px;border:1px solid var(--bd);border-radius:2px}
-@media(max-width:600px){.logo{font-size:34px}.stit{font-size:28px}.og{grid-template-columns:1fr 1fr}.cg{grid-template-columns:1fr}.budget-opts.show{grid-template-columns:repeat(2,1fr)}}
+
+/* HISTORY OVERLAY */
+.hist-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;display:none;backdrop-filter:blur(4px)}
+.hist-overlay.open{display:flex;flex-direction:column}
+.hist-panel{background:var(--bg);border-left:1px solid var(--bd);width:100%;max-width:520px;margin-left:auto;height:100%;display:flex;flex-direction:column;animation:slideIn .22s ease}
+@keyframes slideIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
+.hist-head{padding:22px 20px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.hist-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--ac)}
+.hist-actions{display:flex;align-items:center;gap:10px}
+.hist-close{background:transparent;border:1px solid var(--bd);color:var(--mu);font-family:'DM Mono',monospace;font-size:11px;padding:6px 12px;cursor:pointer;border-radius:2px;transition:all .12s}
+.hist-close:hover{color:var(--tx);border-color:var(--mu2)}
+.hist-clear{background:transparent;border:1px solid rgba(255,80,80,.25);color:rgba(255,100,80,.6);font-family:'DM Mono',monospace;font-size:10px;padding:5px 10px;cursor:pointer;border-radius:2px;transition:all .12s}
+.hist-clear:hover{color:#ff6655;border-color:rgba(255,80,80,.5)}
+.hist-body{flex:1;overflow-y:auto;padding:16px 20px}
+.hist-empty{text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--mu);line-height:2}
+.hist-empty .he-ico{font-size:32px;display:block;margin-bottom:12px}
+.hc{background:var(--s1);border:1px solid var(--bd);border-radius:4px;margin-bottom:10px;cursor:pointer;transition:all .12s;position:relative;overflow:hidden}
+.hc:hover{border-color:var(--mu2);transform:translateY(-1px)}
+.hc-top{padding:13px 16px 10px}
+.hc-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.hc-scenario{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;letter-spacing:.5px;text-transform:uppercase}
+.hc-tone{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;background:var(--s2);color:var(--mu);border:1px solid var(--bd)}
+.hc-slides{font-family:'DM Mono',monospace;font-size:9px;color:var(--mu)}
+.hc-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--mu);margin-left:auto}
+.hc-car{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;line-height:1;margin-bottom:4px}
+.hc-hook{font-size:12px;color:var(--mu);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hc-del{position:absolute;top:10px;right:10px;width:24px;height:24px;background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.2);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:12px;color:rgba(255,100,80,.5);cursor:pointer;transition:all .12s;opacity:0}
+.hc:hover .hc-del{opacity:1}
+.hc-del:hover{background:rgba(255,80,80,.2);color:#ff6655}
+.hc-bar{height:2px;background:var(--ac);opacity:.2}
+.hist-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--mu);text-align:center;padding:8px 0 4px}
+
+/* scenario badge colors in history */
+.hs-restore{background:rgba(255,100,50,.12);color:#ff7744;border:1px solid rgba(255,100,50,.25)}
+.hs-chase{background:rgba(100,150,255,.1);color:#88aaff;border:1px solid rgba(100,150,255,.2)}
+.hs-race{background:rgba(255,200,50,.1);color:#ffcc44;border:1px solid rgba(255,200,50,.2)}
+.hs-cinematic{background:rgba(200,120,255,.1);color:#cc88ff;border:1px solid rgba(200,120,255,.2)}
+.hs-crew{background:rgba(80,200,120,.1);color:#55cc88;border:1px solid rgba(80,200,120,.2)}
+.hs-drift{background:rgba(232,255,71,.1);color:var(--ac);border:1px solid rgba(232,255,71,.2)}
+
+/* saved flash */
+.save-flash{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ac);color:#000;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;padding:8px 18px;border-radius:2px;letter-spacing:.5px;z-index:200;opacity:0;transition:opacity .2s;pointer-events:none}
+.save-flash.show{opacity:1}
+
+@media(max-width:600px){
+  .logo{font-size:34px}.stit{font-size:28px}
+  .og{grid-template-columns:1fr 1fr}.cg{grid-template-columns:1fr}
+  .budget-opts.show{grid-template-columns:repeat(2,1fr)}
+  .hist-panel{max-width:100%}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-  <div class="logo">BEAMPLAN <small>V3 — PHOTO SLIDE PLANNER</small></div>
-  <div class="tagline">BeamNG photo slideshow creator &bull; TikTok optimized</div>
+  <div class="header-top">
+    <div>
+      <div class="logo">BEAMPLAN <small>V3 — PHOTO SLIDE PLANNER</small></div>
+      <div class="tagline">BeamNG photo slideshow creator &bull; TikTok optimized</div>
+    </div>
+    <button class="hist-btn" onclick="openHistory()">&#9776; History <span class="hb-count" id="hbCount">0</span></button>
+  </div>
 </header>
 <div class="pbar"><div class="pd active" id="pd0"></div><div class="pd" id="pd1"></div><div class="pd" id="pd2"></div><div class="pd" id="pd3"></div></div>
 <div class="step active" id="step-0">
@@ -232,11 +290,148 @@ header{padding:32px 0 22px;border-bottom:1px solid var(--bd);margin-bottom:40px}
   </div>
 </div>
 </div>
+
+<!-- HISTORY OVERLAY -->
+<div class="hist-overlay" id="histOverlay" onclick="overlayClick(event)">
+  <div class="hist-panel" id="histPanel">
+    <div class="hist-head">
+      <div class="hist-title">History</div>
+      <div class="hist-actions">
+        <button class="hist-clear" onclick="clearHistory()">Clear all</button>
+        <button class="hist-close" onclick="closeHistory()">Close ✕</button>
+      </div>
+    </div>
+    <div class="hist-body" id="histBody"></div>
+  </div>
+</div>
+
+<!-- SAVE FLASH -->
+<div class="save-flash" id="saveFlash">&#10003; Saved to history</div>
+
 <script src="beamplan-data.js"></script>
 <script>
 const S={scenario:null,tone:null,car:null,step:0,page:0,slides:12,ideaIdx:0,budget:null,budgetOn:false};
 let budgetOn=false;
 
+/* ── HISTORY ── */
+const HIST_KEY='beamplan_history';
+const MAX_HIST=30;
+
+function getHistory(){
+  try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}
+  catch(e){return [];}
+}
+
+function saveHistory(arr){
+  try{localStorage.setItem(HIST_KEY,JSON.stringify(arr));}catch(e){}
+}
+
+function addToHistory(entry){
+  const arr=getHistory();
+  arr.unshift(entry);
+  if(arr.length>MAX_HIST) arr.splice(MAX_HIST);
+  saveHistory(arr);
+  updateHistCount();
+  showSaveFlash();
+}
+
+function deleteHistEntry(id,e){
+  e.stopPropagation();
+  const arr=getHistory().filter(h=>h.id!==id);
+  saveHistory(arr);
+  updateHistCount();
+  renderHistory();
+}
+
+function clearHistory(){
+  if(!confirm('Clear all history?')) return;
+  saveHistory([]);
+  updateHistCount();
+  renderHistory();
+}
+
+function updateHistCount(){
+  const n=getHistory().length;
+  document.getElementById('hbCount').textContent=n;
+}
+
+function showSaveFlash(){
+  const el=document.getElementById('saveFlash');
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+function openHistory(){
+  renderHistory();
+  document.getElementById('histOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeHistory(){
+  document.getElementById('histOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function overlayClick(e){
+  if(e.target===document.getElementById('histOverlay')) closeHistory();
+}
+
+const scenarioLabels={restore:'Restore',chase:'Chase',race:'Race',cinematic:'Cinematic',crew:'Crew',drift:'Drift'};
+const toneLabels={dramatic:'Dramatic',hype:'Hype',dark:'Dark',funny:'Funny'};
+
+function fmtTime(ts){
+  const d=new Date(ts);
+  const now=new Date();
+  const diff=now-d;
+  if(diff<60000) return 'Just now';
+  if(diff<3600000) return Math.floor(diff/60000)+'m ago';
+  if(diff<86400000) return Math.floor(diff/3600000)+'h ago';
+  if(diff<604800000) return Math.floor(diff/86400000)+'d ago';
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+}
+
+function renderHistory(){
+  const arr=getHistory();
+  const body=document.getElementById('histBody');
+  if(arr.length===0){
+    body.innerHTML=`<div class="hist-empty"><span class="he-ico">&#128247;</span>No plans saved yet.<br>Generate a plan and it<br>saves here automatically.</div>`;
+    return;
+  }
+  body.innerHTML=`<div class="hist-count">${arr.length} of ${MAX_HIST} saved</div>`;
+  arr.forEach(h=>{
+    const card=document.createElement('div');
+    card.className='hc';
+    card.onclick=()=>loadFromHistory(h);
+    const sc=h.scenario||'restore';
+    card.innerHTML=`
+      <div class="hc-bar" style="opacity:${h.slides===15?.35:h.slides===12?.25:.15}"></div>
+      <div class="hc-top">
+        <div class="hc-meta">
+          <span class="hc-scenario hs-${sc}">${scenarioLabels[sc]||sc}</span>
+          <span class="hc-tone">${toneLabels[h.tone]||h.tone}</span>
+          <span class="hc-slides">${h.slides} slides</span>
+          <span class="hc-time">${fmtTime(h.ts)}</span>
+        </div>
+        <div class="hc-car">${h.car}</div>
+        <div class="hc-hook">${h.hook}</div>
+      </div>
+      <div class="hc-del" onclick="deleteHistEntry('${h.id}',event)">&#10005;</div>
+    `;
+    body.appendChild(card);
+  });
+}
+
+function loadFromHistory(h){
+  closeHistory();
+  S.scenario=h.scenario;
+  S.tone=h.tone;
+  S.car=h.car;
+  S.slides=h.slides;
+  S.ideaIdx=h.ideaIdx||0;
+  genPlan();
+}
+
+/* ── MAIN APP ── */
 function updProg(){
   ['pd0','pd1','pd2','pd3'].forEach((id,i)=>{
     const el=document.getElementById(id);
@@ -382,6 +577,22 @@ function genPlan(){
   const car=S.car||'[CAR]';
   const rep=s=>s?s.replace(/\[CAR\]/g,car):s;
   const hook=rep(idea.hook);
+
+  // ── SAVE TO HISTORY ──
+  const histEntry={
+    id: Date.now()+'-'+Math.random().toString(36).slice(2,7),
+    ts: Date.now(),
+    scenario: S.scenario,
+    tone: S.tone,
+    car: car,
+    slides: S.slides,
+    ideaIdx: S.ideaIdx,
+    hook: hook,
+    title: rep(idea.title),
+    cap: rep(idea.cap),
+  };
+  addToHistory(histEntry);
+
   const budgetLabels={under100:'&euro;0&ndash;12k',budget:'&euro;13k&ndash;35k',mid:'&euro;36k&ndash;80k',high:'&euro;80k+'};
   document.getElementById('sbar').innerHTML=`
     <div class="sbi"><div class="sbll">Car</div><div class="sbv">${car}</div></div>
@@ -457,6 +668,9 @@ function copyTags(){
     setTimeout(()=>{btn.textContent='Copy all hashtags';btn.classList.remove('copied');},2000);
   });
 }
+
+// init count on load
+updateHistCount();
 </script>
 </body>
 </html>
